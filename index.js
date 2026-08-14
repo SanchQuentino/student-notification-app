@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
 app.use(express.json())
-const students = [
+let students = [
     {studentId: 101, name:"Nguyen Van A", class:"5A1", parentName:"Nguyen Duc A", parentPhone:"0122134812"}
 ]
 const notifications = [
@@ -27,6 +27,30 @@ app.post('/students', (req,res) =>{
     const newStudent = {studentId: students.length+1, name, class: className, parentName, parentPhone}
     students.push(newStudent)
     res.status(201).json(newStudent)
+})
+app.put('/students/:studentId', (req,res)=>{
+    console.log(req.params.studentId)
+    const student = students.find((item) => item.studentId === Number(req.params.studentId))
+    if(!student){
+        res.status(404).json({error: "Khong tim thay hoc sinh"})
+    } else {
+        const {name, class:className, parentName, parentPhone} = req.body
+        student.name = name
+        student.class = className
+        student.parentName = parentName
+        student.parentPhone = parentPhone
+        res.json(student)
+    }
+})
+app.delete('/students/:studentId', (req, res) =>{
+    console.log(req.params.studentId)
+    const student = students.find((item) => item.studentId === Number(req.params.studentId))
+    if(!student){
+        res.status(404).json({error:"Khong tim thay hoc sinh"})
+    }else{
+        students = students.filter((item) => item.studentId !== Number(req.params.studentId))
+        res.json({message: "Da xoa hoc sinh"})
+    }
 })
 
 app.get('/notifications', (req,res) =>{
